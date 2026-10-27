@@ -1,0 +1,12 @@
+# Configuration
+/configure router "Base" bgp neighbor "172.16.55.0" peer-as 64511
+/configure router "Base" bgp neighbor "172.16.55.0" group "EBGP"
+/configure service vprn 1000 name "vprn-1000" customer 1
+
+# Log events
+  91 2026/07/07 19:47:42.115 UTC MINOR: PORT #2005 Base Port 1/2/c10
+  "SFF Inserted"
+  326338 2025/04/17 13:35:18.616 UTC WARNING: BGP #2011 vprn-1000 Peer 26: 172.16.16.110
+  "(ASN 64511) VR 26: Group EBGP: Peer 172.16.16.110: remote end closed connection"
+  326314 2025/04/17 13:33:02.664 UTC INDETERMINATE: LOGGER #2010 Base Clear FILTER
+  "Clear function clearFilterIp has been run with parameters: filter-id="4002" entry-id="" type="".  The completion result is: success.  Additional error text, if any, is: "

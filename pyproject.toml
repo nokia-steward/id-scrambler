@@ -1,0 +1,71 @@
+[build-system]
+# Pinned rather than ranged so the offline container build resolves against the
+# single setuptools wheel that scripts/build-wheelhouse.sh downloads.
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "id_scrambler"
+# Packaged (PEP 440) version. The tool reports its own release string
+# ("1.0.0") via `--version`; see id_scrambler.VERSION.
+version = "1.0.0"
+description = "Offline cleartext scrambling tool driven by YAML pattern rules."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "BSD-3-Clause"
+authors = [{ name = "Nokia" }]
+keywords = ["id_scrambler", "anonymization", "sanitize", "yang", "sha256"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Security",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "PyYAML>=6.0",
+    "tqdm>=4.70.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/nokia-steward/id-scrambler/"
+Source = "https://github.com/nokia-steward/id-scrambler/"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.5",
+    "mypy>=1.0",
+    "types-PyYAML>=6.0",
+]
+
+[project.scripts]
+id_scrambler = "id_scrambler:main"
+
+[tool.setuptools]
+packages = ["id_scrambler"]
+
+[tool.setuptools.package-data]
+id_scrambler = ["*.yml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+warn_redundant_casts = true
+ignore_missing_imports = true

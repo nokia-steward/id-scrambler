@@ -1,0 +1,50 @@
+# Every occurrence of '64511' should hash to the same value.
+
+# Configuration
+/configure router "Base" autonomous-system 64511
+/configure router "Base" bgp neighbor "172.16.55.0" peer-as 64511
+/configure router "Base" bgp neighbor "172.16.55.0" local-as 64511
+/configure router "Base" bgp neighbor "172.16.55.0" description "my-neighbor"
+/configure router "Base" bgp group "IBGP"
+
+# Input
+show router bgp summary
+===============================================================================
+BGP Router ID:172.16.55.2      AS:64511       Local AS:64511
+===============================================================================
+
+show router bgp summary all
+
+===============================================================================
+BGP Summary
+===============================================================================
+Legend : D - Dynamic Neighbor
+===============================================================================
+Neighbor
+Description
+ServiceId          AS PktRcvd InQ  Up/Down   State|Rcv/Act/Sent (Addr Family)
+                      PktSent OutQ
+-------------------------------------------------------------------------------
+172.16.55.0
+my-neighbor
+Def. Inst       64511 178599*    0 79d08h02m 1057149/1057148/0 (IPv4)
+                       228478    0
+2001:db8:a1ca:7e1:7950:7750:7210:7705
+my-neighbor
+Def. Inst       64511 139974*    0 79d08h01m 405577/405577/0 (IPv6)
+                       228477    0
+
+show router bgp neighbor "172.16.55.0" detail
+
+===============================================================================
+BGP Neighbor
+===============================================================================
+-------------------------------------------------------------------------------
+Peer                 : 172.16.55.0
+Description          : my-neighbor
+Group                : IBGP
+-------------------------------------------------------------------------------
+Peer AS              : 64511            Peer Port            : 61313
+Peer Address         : 172.16.55.0
+Local AS             : 64511            Local Port           : 179
+Local Address        : 172.16.55.2

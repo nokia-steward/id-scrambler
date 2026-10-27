@@ -1,0 +1,18 @@
+# --- Include useful supporting files in the sdist ---
+include README.md
+include requirements.txt
+recursive-include id_scrambler *.yml
+recursive-include examples *
+recursive-include tests *.py
+
+# --- Exclude junk / large / local-only files ---
+global-exclude *.scrm
+global-exclude *.py[cod]
+global-exclude .DS_Store *.swp
+
+prune env
+prune .venv
+prune .git
+prune .pytest_cache
+prune .ruff_cache
+prune **/__pycache__

@@ -1,0 +1,36 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packaging / build artifacts
+*.egg-info/
+build/
+dist/
+wheelhouse/
+
+# Test / tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Scrambler output files
+*.scrm
+stdin.scrm
+
+# Editor / OS cruft
+.DS_Store
+*.swp
+
+.python-version
+#*.cfg
+#
+uv.lock
+

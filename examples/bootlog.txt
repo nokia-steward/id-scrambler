@@ -1,0 +1,49 @@
+# The TiMOS banner has some colon characters that sometimes are interpreted
+# as IPv6 addresses, these should not be scrambled.
+# Non-printable ^M characters should be removed.
+
+Boot log started
+Warning: Total memory limit (9223372036854771712) > host memory (134527700992).
+
+Looking for cf3:/bof.cfg ... OK, reading
+
+Total Memory: 128295MB  Chassis Type: 0x24   [ ref: cca4330f6594; ]
+TiMOS-B-26.7.R1 both/x86_64 Nokia 7750 SR-1 Copyright (c) 2000-2026 Nokia.
+All rights reserved. All use subject to applicable license agreements.
+Built on Fri Jul 10 17:42:07 UTC 2026 by builder in /builds/267B/R1/panos
+
+Scheduler: using fair scheduler policy
+
+
+   ___                    ___           ___           ___
+  /\  \                  /\__\         /\  \         /\  \
+  \:\  \        ___     /::|  |       /::\  \       /::\  \
+   \:\  \      /\__\   /:|:|  |      /:/\:\  \     /:/\:\  \
+   /::\  \    _\/__/  /:/|:|__|__   /:/  \:\  \   _\:\~\:\  \
+  /:/\:\__\  /\__\   /:/ |::::\__\ /:/__/ \:\__\ /\ \:\ \:\__\
+ /:/  \/__/ /:/  /   \/__/~~/:/  / \:\  \ /:/  / \:\ \:\ \/__/
+/:/  /     /:/  /          /:/  /   \:\  /:/  /   \:\ \:\__\
+\/__/      \/__/          /:/  /     \:\/:/  /     \:\/:/  /
+                         /:/  /       \::/  /       \::/  /
+                         \/__/         \/__/         \/__/
+
+Running 64 bit architecture
+
+Time from clock is Tue Jul 14 17:56:49 2026 UTC
+Trace memory initialised
+Initial DNS resolving preference is ipv6-first
+
+Looking for cf3:/bof.cfg ... OK, reading
+
+Current Time: Tue Jul 14 17:56:52 UTC 2026
+Loading TiMOS License for 'TiMOS-B-26.7.R1' from location:
+   'cf3:\license.txt' ... OK
+
+Loading primary configuration file "cf3:\config.cfg"
+Commit 28 (1/1): load full-replace "cf3:\config.cfg"
+ 512 linesLoaded 966 lines in 0.1 seconds from file "cf3:\config.cfg"
+WARNING: MGMT_CORE #2207: Migrated element - configure system security ssh server-cipher-list-v2 cipher 180 - elements added
+WARNING: MGMT_CORE #2207: Migrated element - configure system security ssh client-cipher-list-v2 cipher 180 - elements added
+Committing configuration ... finished in 0.1 seconds
+
+Login: 

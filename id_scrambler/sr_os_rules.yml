@@ -1,0 +1,318 @@
+# sr_os_rules.yml - Nokia SR OS scrambling rules.
+#
+# © 2026 Nokia
+# Licensed under the BSD 3-Clause License
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Each top-level key is a rule name.  Rule ordering is significant, the first
+# rule that matches a string of text is evaluated, so ignore rules with no
+# `scramble-prefix` are ordered first to match text that must remain cleartext.
+#
+# Rule options:
+#   description        : informational only, ignored by the application
+#   enabled            : true|false (default true)
+#   ignore-match-prefix: prefix to ignore in the match (default none)
+#   match-pattern      : the pattern to match
+#   output-padding     : true|false (default false), pad output to the matched
+#                        length
+#   pattern-format     : yang|posix (default yang)
+#   scramble-group     : scramble only the (scramble group) part of the match
+#                        (default: whole match)
+#   scramble-prefix    : prefix for the scrambled string, omit to ignore a match
+#   scramble-suffix    : suffix for the scrambled string (default none)
+
+# --- ignore rules (keep cleartext) ----------------------------------------- #
+
+ignore-echo:
+  description: 'Ignore classic CLI echo banner lines like: echo "..."'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'echo ".+"$'
+
+ignore-command-names:
+  description: "Ignore command names like: CLI Command: '...'"
+  enabled: true
+  pattern-format: posix
+  match-pattern: "^CLI Command: '.+'$"
+
+ignore-commit-history-logs:
+  description: 'Ignore commit history logs like: Log "..."'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'Log +".+"$'
+
+ignore-numeric-entries:
+  description: 'Ignore numeric entries like: filter "1001", log-id "99", etc.'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '(filter|log-id|log-name|log-syslog-name|mirror-dest|name|named-entry|server|syslog) "\d+"'
+
+ignore-forwarding-classes:
+  description: 'Ignore quoted forwarding classes like: fc "af"'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'fc "(be|l2|af|l1|h2|ef|h1|nc)"'
+
+ignore-timos-banner:
+  description: 'Ignore "::" patterns in the TiMOS banner'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '\|::::\\|\/::\||\/::\\|\\::\/'
+
+ignore-ipv4-well-knowns:
+  description: 'Ignore the IPv4 address "0.0.0.0" and default "0.0.0.0/0"'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '(?<![0-9])(0\.0\.0\.0/0|0\.0\.0\.0)'
+
+ignore-ipv4-loopbacks:
+  description: 'Ignore 127/8 "IANA - Loopback" addresses'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '127\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])'
+
+ignore-ipv6-well-knowns:
+  description: 'Ignore the IPv6 address "::"'
+  enabled: true
+  pattern-format: posix
+  match-pattern: ' ::(\.|/0)'
+
+# Disable this rule if common keywords are substrings in other quoted
+# strings that have identifiable information.  This substring will match
+# and the entire string will not be scrambled.
+ignore-common-keywords:
+  description: 'Ignore common quoted keywords like: "default", "exit", etc.'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '"(administrative|admin|default|filter|exit|password|system|enable|enable-admin|Base|state|logout)"'
+
+# This rule is intentionally disabled by default because it will display
+# identifiable information in log events.  It may also ignore more quoted
+# strings than just the ones in log events in the the output of 'admin
+# tech-support'.
+ignore-log-messages:
+  description: 'Ignore log messages in "show log" commands'
+  enabled: false
+  match-pattern: '^  ".+"$'
+
+# --- scrambling rules ------------------------------------------------------ #
+
+mac-address:
+  description: >
+    The mac-address type represents an IEEE 802 MAC address.
+    The canonical representation uses lowercase characters.
+  enabled: true
+  pattern-format: yang
+  match-pattern: '[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}'
+  scramble-prefix: 'MAC-A-'
+  output-padding: true
+
+autonomous-system:
+  description: 'Autonomous system number following the "autonomous-system" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'autonomous-system \d+'
+  scramble-prefix: 'ASN-'
+  ignore-match-prefix: 'autonomous-system '
+  output-padding: true
+
+peer-as:
+  description: 'Autonomous system number following a "peer-as" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'peer-as \d+'
+  scramble-prefix: 'ASN-'
+  ignore-match-prefix: 'peer-as '
+  output-padding: true
+
+local-as:
+  description: 'Autonomous system number following a "local-as" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'local-as \d+'
+  scramble-prefix: 'ASN-'
+  ignore-match-prefix: 'local-as '
+  output-padding: true
+
+as-colon:
+  description: 'Autonomous system number following "AS:"'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '\bAS:\d+'
+  scramble-prefix: 'ASN-'
+  ignore-match-prefix: 'AS:'
+
+route-distinguisher:
+  description: 'Route distinguisher following a "route-distinguisher" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'route-distinguisher .*$'
+  scramble-prefix: 'STR-'
+  ignore-match-prefix: 'route-distinguisher '
+  output-padding: true
+
+# This rule matches the classic CLI unquoted value which needs a long
+# match pattern.  The value is a quoted string in the MD-CLI.
+rd-entry:
+  description: 'Route distinguisher following a "rd-entry" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'rd-entry (?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])){3}/(?:[0-9]|[1-2][0-9]|3[0-2]):(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])|(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])){3}/(?:[0-9]|[1-2][0-9]|3[0-2]):\*|(?:429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|[1-3][0-9]{9}|[1-9][0-9]{1,8}|[1-9]):(?:429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|[1-3][0-9]{9}|[1-9][0-9]{1,8}|[0-9])|(?:429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|[1-3][0-9]{9}|[1-9][0-9]{1,8}|[1-9]):\*)'
+  scramble-prefix: 'STR-'
+  ignore-match-prefix: 'rd-entry '
+  output-padding: true
+
+primary-config:
+  description: 'File name in the BOF "primary-config" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'primary-config .*'
+  scramble-prefix: 'primary-config   STR-'
+  output-padding: true
+
+secondary-config:
+  description: 'File name in the BOF "secondary-config" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'secondary-config .*'
+  scramble-prefix: 'secondary-config STR-'
+  output-padding: true
+
+tertiary-config:
+  description: 'File name in the BOF "tertiary-config" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'tertiary-config .*'
+  scramble-prefix: 'tertiary-config  STR-'
+  output-padding: true
+
+dns-domain:
+  description: 'Domain in the BOF "dns-domain" command'
+  enabled: true
+  pattern-format: posix
+  match-pattern: 'dns-domain .*'
+  scramble-prefix: 'dns-domain       STR-'
+  output-padding: true
+
+by-user-from:
+  description: '"  by user from" messages in the saved configuration files'
+  enabled: true
+  pattern-format: posix
+  match-pattern: ' by \S+ from'
+  scramble-prefix: ' by STR-'
+  scramble-suffix: ' from'
+  output-padding: true
+
+by-user-parentheses:
+  description: '"  by user (" messages in the saved configuration files'
+  enabled: true
+  pattern-format: posix
+  match-pattern: ' by \S+ \('
+  scramble-prefix: ' by STR-'
+  scramble-suffix: ' ('
+  output-padding: true
+
+configuration-comment:
+  description: '#comment: configuration comments on single and multiple lines'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '# comment: .*'
+  scramble-prefix: '# comment: STR-'
+  output-padding: true
+
+ipv4-prefix:
+  description: >
+    The ipv4-prefix type represents an IPv4 address prefix in CIDR notation,
+    i.e. a dotted-quad followed by a "/" and a prefix length of 0 to 32.
+
+    Must be before the 'ipv4-address' rule so the full prefix is matched.
+  enabled: true
+  pattern-format: yang
+  match-pattern: |
+    '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'
+    + '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
+    + '/([0-9]|[1-2][0-9]|3[0-2])'
+  scramble-prefix: 'IPv4-P-'
+  output-padding: true
+
+ipv4-address:
+  description: >
+    The ipv4-address type represents an IPv4 address in dotted-quad notation.
+    The IPv4 address may include a zone index, separated by a % sign
+    (or a - for legacy, non-standard notations).
+  enabled: true
+  pattern-format: yang
+  match-pattern: |
+    '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'
+    + '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
+    + '([%-]("[^"]*"|[\p{N}\p{L}._-]+))?'
+  scramble-prefix: 'IPv4-A-'
+  output-padding: true
+
+ipv6-prefix:
+  description: >
+    The ipv6-prefix type represents an IPv6 address prefix.
+    The prefix length is given by the number following the
+    slash character and must be less than or equal to 128.
+
+    Must be before the 'ipv6-address' rule so the full prefix is matched.
+  enabled: true
+  pattern-format: yang
+  match-pattern: |
+    '((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}'
+    + '((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|'
+    + '(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}'
+    + '(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))'
+    + '(/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))'
+  scramble-prefix: 'IPv6-P-'
+  output-padding: true
+
+# The 'ipv6-address' pattern in the ietf-inet-types.yang model is too loose,
+# so we're using our own pattern.
+ipv6-address:
+  description: >
+    The ipv6-address type represents an IPv6 address in full,
+    mixed, shortened, and shortened-mixed notation.  The IPv6
+    address may include a zone index, separated by a % sign
+    (or a - for non-standard notations).
+  enabled: true
+  pattern-format: yang
+  # Alternatives are ordered longest-first: Python's re is leftmost
+  # (not POSIX-longest), so the forms that can consume the most hextets
+  # after '::' must be tried before the shorter ones, or an address
+  # like 'fe80::a45c:1ff:fe01:5' would be truncated to 'fe80::a45c'.
+  # The trailing zone accepts '%' or '-' (non-standard) separators
+  # followed by a single segment: either a double-quoted string or a run of
+  # letters/digits/'.'/'_'/'-'. A quoted zone stops at the closing quote,
+  # so 'fe80::1-"zone".57400' matches through '..."zone"' and leaves the
+  # trailing '.57400' port number untouched.
+  match-pattern: |
+    '('
+    + '[0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){7}'
+    + '|([0-9a-fA-F]{1,4}:){6}((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])'
+    + '|::(ffff(:0{1,4})?:)?((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])'
+    + '|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])'
+    + '|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})'
+    + '|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}'
+    + '|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}'
+    + '|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}'
+    + '|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}'
+    + '|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}'
+    + '|([0-9a-fA-F]{1,4}:){1,7}:'
+    + '|:((:[0-9a-fA-F]{1,4}){1,7}|:)'
+    + ')'
+    + '([%-]("[^"]*"|[\p{N}\p{L}._-]+))?'
+  scramble-prefix: 'IPv6-A-'
+  output-padding: true
+
+# This rule is ordered last so the more specific quoted string rules above
+# are evaluated first.  Move this rule to the top of the "scrambling rule"
+# section so that it matches first if there are too many more specific matches.
+quoted-string:
+  description: 'Any quoted string value'
+  enabled: true
+  pattern-format: posix
+  match-pattern: '"([^"]*)"'
+  scramble-prefix: 'STR-'
+  scramble-group: 1
+  output-padding: true
