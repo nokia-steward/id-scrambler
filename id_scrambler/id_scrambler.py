@@ -91,8 +91,8 @@ __all__ = [
     "version_text",
 ]
 
-VERSION = "1.0.0"
-RELEASE_DATE = "2026-10-12"
+VERSION = "1.0.1"
+RELEASE_DATE = "2026-11-11"
 SOURCE_URL = "https://github.com/nokia-steward/id-scrambler/"
 PYPI_URL = "https://pypi.org/project/id-scrambler/"
 COPYRIGHT = "© 2026 Nokia\nLicensed under the BSD 3-Clause License"

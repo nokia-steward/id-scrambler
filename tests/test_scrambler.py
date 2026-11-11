@@ -1779,7 +1779,7 @@ def test_prog_is_the_command_name_when_imported_as_a_package():
 
 def test_version_alone_succeeds(capsys):
     assert sc.main(["-v"]) == 0
-    assert "Version: 1.0.0" in capsys.readouterr().out
+    assert "Version: 1.0.1" in capsys.readouterr().out
 
 
 def test_help_and_version_are_mutually_exclusive(capsys):
@@ -1809,7 +1809,7 @@ def test_version_with_other_option_exits(capsys):
 def test_version_text_contains_fields():
     txt = sc.version_text()
     assert f"{sc.PROG}\n" in txt
-    assert "Version: 1.0.0" in txt
+    assert "Version: 1.0.1" in txt
     assert sc.COPYRIGHT in txt
     assert f"GitHub : {sc.SOURCE_URL}" in txt
 

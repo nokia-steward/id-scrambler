@@ -7,8 +7,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "id_scrambler"
 # Packaged (PEP 440) version. The tool reports its own release string
-# ("1.0.0") via `--version`; see id_scrambler.VERSION.
-version = "1.0.0"
+# ("1.0.1") via `--version`; see id_scrambler.VERSION.
+version = "1.0.1"
 description = "Offline cleartext scrambling tool driven by YAML pattern rules."
 readme = "README.md"
 requires-python = ">=3.11"

@@ -98,13 +98,13 @@ Container Registry.
 To install the 64-bit x86 image, execute this command:
 
 ```sh
-sudo docker pull ghcr.io/nokia-steward/id-scrambler:1.0.0-amd64
+sudo docker pull ghcr.io/nokia-steward/id-scrambler:1.0.1-amd64
 ```
 
 To install the 64-bit ARM image, execute this command:
 
 ```sh
-sudo docker pull ghcr.io/nokia-steward/id-scrambler:1.0.0-arm64
+sudo docker pull ghcr.io/nokia-steward/id-scrambler:1.0.1-arm64
 ```
 
 ## Usage
@@ -345,14 +345,14 @@ The input and output may also be a file.
 To run the Docker image to scramble a file, execute this command:
 
 ```sh
-sudo docker run --rm -v "$PWD:/work" -u "$(id -u):$(id -g)" ghcr.io/nokia-steward/id-scrambler:1.0.0-amd64 -c /usr/share/id_scrambler/sr_os_rules.yml myinputfile
+sudo docker run --rm -v "$PWD:/work" -u "$(id -u):$(id -g)" ghcr.io/nokia-steward/id-scrambler:1.0.1-amd64 -c /usr/share/id_scrambler/sr_os_rules.yml myinputfile
 ```
 
 To run the Docker image interactively, optionally with the `-d` option to
 enable debugging, execute this command:
 
 ```sh
-sudo docker run --rm -i ghcr.io/nokia-steward/id-scrambler:1.0.0-amd64 -c /usr/share/id_scrambler/sr_os_rules.yml -o stdout
+sudo docker run --rm -i ghcr.io/nokia-steward/id-scrambler:1.0.1-amd64 -c /usr/share/id_scrambler/sr_os_rules.yml -o stdout
 ```
 
 ## Input file formatting
